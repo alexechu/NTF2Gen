@@ -1,10 +1,10 @@
 #!/software/conda/envs/pyrosetta/bin/python3
-
+import sys
+sys.path.append('/home/alexechu/datasets/NTF2Gen')
+#sys.path.append('/home/basantab/.local/lib/python3.7/site-packages/')
 from BeNTF2_toolkit import *
 from BeNTF2seq.BeNTF2resfile import *
 import json
-import sys
-#sys.path.append('/home/basantab/.local/lib/python3.7/site-packages/)
 #import h5py
 import argparse
 import random, string
@@ -20,8 +20,8 @@ argparser.add_argument('-database', type=str,help='Database folder')
 argparser.add_argument('-nstruct', type=int,help='Max number of structures to output. May output less if some of them fail.')
 argparser.add_argument('-prefix', type=str,help='Prefix to add to output names.')
 argparser.add_argument('-input_pdb', type=str,help='sheet pdb')
-argparser.add_argument('-threads', type=int,help='Number of threads')
-argparser.add_argument('-min_aa_probability', deafult=-5, type=float ,help='Score type score weight')
+argparser.add_argument('-threads', type=int,default=1,help='Number of threads')
+argparser.add_argument('-min_aa_probability', default=-5, type=float ,help='Score type score weight')
 argparser.add_argument('-PSSM_w', type=float, default=0.5, help='PSSM mover weight')
 argparser.add_argument('-enrichment_threshold', default=0.2, type=float ,help='enrichment_threshold')
 argparser.add_argument('-include_adjacent_residues', default='True', type=str, help='include_adjacent_residues')

@@ -1,9 +1,7 @@
-from BeNTF2_toolkit import *
 import json
 import argparse
 import subprocess
 import copy
-from Blueprint import *
 import sys
 import glob
 import pandas as pd
@@ -11,9 +9,12 @@ from Bio import SeqIO
 from optparse import OptionParser
 
 #sys.path.append("/home/basantab/NTF2Gen")
+sys.path.append("/home/alexechu/datasets/NTF2Gen/")
 #sys.path.append("/home/basantab/fragment_tools")
 #sys.path.append("/home/basantab/scripts")
 
+from BeNTF2_toolkit import *
+from Blueprint import *
 
 ################################################################################
 # Options
@@ -40,7 +41,7 @@ pdb_data = {}
 for PDB_fname in pdbs:
     pdb_handle = open(PDB_fname,'r')
     print(PDB_fname)
-    dict_line = [line[:-1] for line in pdb_handle.readlines() if 'BENTF2DICT' in line ][0]
+    dict_line = [line for line in pdb_handle.readlines() if 'BENTF2DICT' in line ][0]
     pdb_handle.close()
     dict_string = ' '.join(dict_line.split()[1:])
     BeNTF2dict = json.loads(dict_string)
@@ -52,6 +53,9 @@ for PDB_fname in pdbs:
         BeNTF2dict[key] = BeNTF2dict['ring_dict']['sheet_dict'][key]
     for key in BeNTF2dict['c_helix_dict']:
         BeNTF2dict[key+'c_helix_dict'] = BeNTF2dict['c_helix_dict'][key]
+    if not BeNTF2dict['has_cHelix']:
+        BeNTF2dict['h1_lenc_helix_dict'] = 0
+    print(BeNTF2dict)
     pdb_data[PDB_fname] = BeNTF2dict
 
 df = pd.DataFrame.from_dict(pdb_data, orient='index')
@@ -155,7 +159,8 @@ for pdbidindex,pdbid in enumerate(pdb_seqs_str):
     # independent.
     miscount_E3 = 1 if connection_type in miscounts_E3 else 0
     E3_start = h3_end + this_len
-    sec_bulge = df.loc[pdbid]['sec_bulge_E3_pos'] + miscount_E3
+    sec_bulge = df.loc[pdbid]['Second_b_place'] if df.loc[pdbid]['Second_b_place'] is not None else 0
+    sec_bulge += miscount_E3
     if connection_type=='GBA':
         sec_bulge = 1
     if connection_type=='BA':

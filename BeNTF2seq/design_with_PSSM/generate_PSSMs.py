@@ -21,12 +21,14 @@ import matplotlib.pyplot as plt
 from scipy import stats
 aas = 'FIWLVMYCATHGSQRKPNED'
 
+PATH_TO_REPO = '/home/alexechu/datasets/NTF2Gen'
+
 argparser = argparse.ArgumentParser(description='Generate PSSMs for biasing Rosetta design.')
 argparser.add_argument('-alignment_file', type=str,help='File outputb from ../fit_PSSM_model/scripts/pdb2aln.py')
 args = argparser.parse_args()
 
 # The alignment used to fit the weights of the PSSM
-alnOrigPath= '../fit_PSSM_model/aln_seqs.fasta'
+alnOrigPath= f'{PATH_TO_REPO}/BeNTF2seq/fit_PSSM_model/aln_seqs.fasta'
 
 # The alignment of sequences, we should generate new PSSMs for.
 newAln = args.alignment_file # It is assumed that the id in this fasta file is the path to the pdb file.
@@ -71,8 +73,8 @@ def parse_a3m(filename):
 
 # Load the PSSM from the precalculated weights
 alnOrig = parse_a3m(alnOrigPath)
-oneBodyTerms = np.loadtxt('../fit_PSSM_model/TF_weights.txt')
-X1_pssm_map = np.loadtxt('../fit_PSSM_model/TF_weights_annotation.txt', dtype='U9')
+oneBodyTerms = np.loadtxt(f'{PATH_TO_REPO}/BeNTF2seq/fit_PSSM_model/TF_weights.txt')
+X1_pssm_map = np.loadtxt(f'{PATH_TO_REPO}/BeNTF2seq/fit_PSSM_model/TF_weights_annotation.txt', dtype='U9')
 posePos2OrigAlnPos = make_pose2alnMap(alnOrig)
 use_gaps = False
 if use_gaps:
@@ -133,7 +135,7 @@ for i, pssm_vec in enumerate(pssm2):
         pssm2[i][np.where(pssm2[i]!=0)] = 1.0
 
 # Then we iterate over all pdbs and write the pssm scores following the rules
-outdir = './designs_w_pssm/'
+outdir = f'{PATH_TO_REPO}/BeNTF2seq/fit_PSSM_model/designs_w_pssm/'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
